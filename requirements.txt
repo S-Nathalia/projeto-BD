@@ -1,0 +1,4 @@
+pandas>=1.5.1
+dedupe>=2.0.22
+dedupe-variable-address
+dedupe-variable-name
