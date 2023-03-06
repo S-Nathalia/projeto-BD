@@ -87,14 +87,17 @@ class TratamentoDados:
         self.db = self.db.drop(columns=[coluna_nome])
         self.db = self.db.join(DataFrame(dados, columns=[coluna_nome]), how='right')
 
-    def preencher_com_caractere_vazio(self, coluna_nome):
+    def preencher_com_caractere_vazio(self, coluna_nome, padroniza_int=False):
         coluna = self.db.get(coluna_nome)
         dados = []
         for dado in coluna:
             if dado == 'nan':
-                dados.append("")
+                dados.append(None)
             else: 
-                dados.append(dado)
+                if padroniza_int:
+                    dados.append(int(dado.split(".")[0]))
+                else:
+                    dados.append(dado)
         
         self.db = self.db.drop(columns=[coluna_nome])
         self.db = self.db.join(DataFrame(dados, columns=[coluna_nome]), how='right')
@@ -106,3 +109,11 @@ class TratamentoDados:
             db_ordenado = db_ordenado.join(DataFrame(db.get(coluna), columns=[coluna]), how='right')
         
         self.db = db_ordenado
+
+    def adicionar_etiqueta(self, etiqueta, nome_da_coluna="DB"):
+        quant_linhas = len(self.db.index)
+        etiquetas = []
+        for i in range(quant_linhas):
+            etiquetas.append(etiqueta)
+        coluna = DataFrame(etiquetas, columns=[nome_da_coluna])
+        self.db = self.db.join(coluna)
